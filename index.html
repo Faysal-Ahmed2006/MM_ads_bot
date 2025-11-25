@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EASY EARN MANY</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='10233253' data-sdk='show_10233253'></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #F0B90B;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --danger: #dc3545;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text: #fff;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 36px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="40" fill="white">💰</text></svg>');
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        
+        /* Navigation Styles */
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 5px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .nav-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-tab i {
+            font-size: 18px;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            width: 100%;
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Dashboard Styles */
+        .points-card {
+            text-align: center;
+        }
+        
+        .points-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .points-value {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .points-unit {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        /* Progress Graph Styles */
+        .progress-card {
+            margin-top: 15px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .progress-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .progress-value {
+            font-size: 14px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, var(--accent), #ffeb3b);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .progress-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .progress-stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .progress-stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .progress-stat-label {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        /* Ads Section Styles */
+        .ad-card {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .ad-icon {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: #333;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Withdraw Section Styles */
+        .binance-card {
+            text-align: center;
+            border: 2px solid var(--accent);
+        }
+        
+        .binance-logo {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .binance-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+        
+        .withdraw-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .form-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .withdraw-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .min-max-info {
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.8;
+            margin: 10px 0;
+        }
+
+        .processing-time {
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.8;
+            margin: 10px 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        /* Profile Section Styles */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .profile-info h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Settings Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .settings-label {
+            font-size: 16px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* History Styles */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .history-date {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .history-points {
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .status-processing {
+            background: #ffa500;
+            color: #000;
+        }
+        
+        .status-completed {
+            background: var(--success);
+            color: white;
+        }
+        
+        /* Loading and Notification Styles */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        /* Binance-specific styles */
+        .binance-badge {
+            background: var(--accent);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .network-info {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* Ad container styles */
+        .ad-container {
+            margin: 15px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .ad-status {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .ad-tip {
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.7;
+            margin: 5px 0;
+        }
+        
+        /* Difold Balance Styles */
+        .difold-balance {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .difold-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .difold-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .firebase-status {
+            text-align: center;
+            padding: 5px;
+            font-size: 10px;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"></div>
+            <h1>EASY EARN MANY</h1>
+            <p class="subtitle">Watch ads and earn Binance withdrawals</p>
+            <div class="firebase-status" id="firebaseStatus">Connecting to server...</div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="dashboard">
+                <i>📊</i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-tab" data-tab="ads">
+                <i>📺</i>
+                <span>Watch Ads</span>
+            </div>
+            <div class="nav-tab" data-tab="withdraw">
+                <i>💸</i>
+                <span>Withdraw</span>
+            </div>
+            <div class="nav-tab" data-tab="profile">
+                <i>👤</i>
+                <span>Profile</span>
+            </div>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div class="content-section active" id="dashboard">
+            <div class="card points-card">
+                <div class="points-label">Your Points</div>
+                <div class="points-value" id="points">0</div>
+                <div class="points-unit">Points</div>
+                
+                <div class="difold-balance">
+                    <div class="difold-label">Difold Balance</div>
+                    <div class="difold-value" id="difoldBalance">0</div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Today's Earnings</div>
+                        <div class="stat-value" id="todayEarnings">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Ads</div>
+                        <div class="stat-value" id="totalAds">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Graph Card -->
+            <div class="card progress-card">
+                <div class="progress-header">
+                    <div class="progress-title">Weekly Progress</div>
+                    <div class="progress-value" id="weeklyProgress">0%</div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
+                </div>
+                <div class="progress-stats">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="weeklyGoal">0/100</div>
+                        <div class="progress-stat-label">Weekly Goal</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="dailyAverage">0</div>
+                        <div class="progress-stat-label">Daily Average</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>📋</span>
+                    <span>Recent Activity</span>
+                </div>
+                <div class="history-list" id="dashboardHistory">
+                    <!-- History items will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Watch Ads Section -->
+        <div class="content-section" id="ads">
+            <div class="card ad-card">
+                <div class="ad-icon">📺</div>
+                <h2>Watch Ad & Earn Points</h2>
+                <p>Watch a short advertisement and earn 10 points for each view.</p>
+                
+                <!-- MoniTag Ad Container -->
+                <div class="ad-container" id="monitag-ad-container">
+                    <div class="ad-status" id="ad-status">Ad will load here...</div>
+                </div>
+                
+                <button class="btn btn-primary" id="watchAdBtn">
+                    <span>Watch Ad & Earn 10 Points</span>
+                </button>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Loading Ad...</p>
+                </div>
+                
+                <div class="ad-tip">
+                    💡 Tip: Complete more ads to earn more points faster!
+                </div>
+            </div>
+        </div>
+        
+        <!-- Withdraw Section -->
+        <div class="content-section" id="withdraw">
+            <div class="card binance-card">
+                <div class="binance-logo">🔶</div>
+                <h2>Binance Withdrawal</h2>
+                <p>Withdraw your points directly to your Binance account</p>
+                
+                <div class="binance-info">
+                    <div>
+                        <div>Minimum Withdrawal</div>
+                        <div class="stat-value">1000 points</div>
+                    </div>
+                    <div>
+                        <div>Conversion Rate</div>
+                        <div class="stat-value">1000 pts = $1.00</div>
+                    </div>
+                </div>
+
+                <div class="processing-time">
+                    ⏰ Processing Time: 24 hours
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>🔶</span>
+                    <span>Withdraw to Binance</span>
+                </div>
+                
+                <div class="withdraw-form">
+                    <div class="form-group">
+                        <label class="form-label">Binance Pay ID <span class="binance-badge">REQUIRED</span></label>
+                        <input type="text" class="form-input" id="binanceId" placeholder="Enter your Binance Pay ID" value="000">
+                        <div class="network-info">Make sure to enter correct Binance Pay ID</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Points to Withdraw</label>
+                        <input type="number" class="form-input" id="withdrawPoints" placeholder="Enter points (min 1000)">
+                    </div>
+                    
+                    <div class="min-max-info">
+                        Minimum: 1000 points | Maximum: 10,000 points per transaction
+                    </div>
+
+                    <div class="processing-time">
+                        ✅ Withdrawal will be confirmed after 24 hours processing
+                    </div>
+                    
+                    <div class="withdraw-info">
+                        <div>You will receive:</div>
+                        <div id="withdrawAmount">$0.00</div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="withdrawBtn" disabled>
+                        <span>Withdraw to Binance</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>📋</span>
+                    <span>Withdrawal History</span>
+                </div>
+                <div class="history-list" id="withdrawHistory">
+                    <div class="history-item">
+                        <div>
+                            <div>No withdrawals yet</div>
+                            <div class="history-date">Earn more points to withdraw</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Section -->
+        <div class="content-section" id="profile">
+            <div class="card">
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-info">
+                        <h2 id="userName">User Name</h2>
+                        <p id="userLevel">Level 1 Member</p>
+                    </div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Points</div>
+                        <div class="stat-value" id="profilePoints">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Ads Watched</div>
+                        <div class="stat-value" id="profileAds">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Member Since</div>
+                        <div class="stat-value" id="memberSince">2023</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Withdrawn</div>
+                        <div class="stat-value" id="totalWithdrawn">$0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <span>⚙️</span>
+                    <span>Account Settings</span>
+                </div>
+                <div class="profile-menu">
+                    <div class="menu-item" id="editProfileBtn">
+                        <i>👤</i>
+                        <span>Edit Profile</span>
+                    </div>
+                    <div class="menu-item" id="binanceSettings">
+                        <i>🔶</i>
+                        <span>Binance Account</span>
+                    </div>
+                    <div class="menu-item" id="privacySettings">
+                        <i>🔒</i>
+                        <span>Privacy & Security</span>
+                    </div>
+                    <div class="menu-item" id="helpSupport">
+                        <i>❓</i>
+                        <span>Help & Support</span>
+                    </div>
+                    <div class="menu-item" id="aboutApp">
+                        <i>ℹ️</i>
+                        <span>About App</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>EASY EARN MUNY - Watch ads and withdraw to Binance | Processing time: 24 hours</p>
+        </div>
+    </div>
+    
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Edit Profile</div>
+                <button class="close-btn" id="closeEditProfile">&times;</button>
+            </div>
+            <div class="settings-group">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="editName" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="editEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" id="editPhone" placeholder="Enter your phone number">
+                </div>
+            </div>
+            <button class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+        </div>
+    </div>
+    
+    <!-- Binance Account Modal -->
+    <div class="modal" id="binanceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Binance Account</div>
+                <button class="close-btn" id="closeBinance">&times;</button>
+            </div>
+            <div class="settings-group">
+                <div class="form-group">
+                    <label class="form-label">Binance Pay ID</label>
+                    <input type="text" class="form-input" id="binancePayId" placeholder="Enter your Binance Pay ID" value="000">
+                    <div class="network-info">This ID will be used for all withdrawals</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preferred Network</label>
+                    <select class="form-input" id="binanceNetwork">
+                        <option value="bep20">BEP20 (Recommended)</option>
+                        <option value="erc20">ERC20</option>
+                        <option value="trc20">TRC20</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Auto Withdraw</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoWithdraw">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="saveBinanceBtn">Save Settings</button>
+        </div>
+    </div>
+    
+    <!-- Privacy & Security Modal -->
+    <div class="modal" id="privacyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Privacy & Security</div>
+                <button class="close-btn" id="closePrivacy">&times;</button>
+            </div>
+            <div class="settings-group">
+                <div class="settings-item">
+                    <div class="settings-label">Two-Factor Authentication</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="twoFactor">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Email Notifications</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="emailNotifications" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Push Notifications</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="pushNotifications" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Data Sharing</div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="dataSharing">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="settings-group">
+                <div class="form-group">
+                    <label class="form-label">Change Password</label>
+                    <input type="password" class="form-input" id="newPassword" placeholder="Enter new password">
+                </div>
+                <button class="btn" id="changePasswordBtn">Change Password</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help & Support Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Help & Support</div>
+                <button class="close-btn" id="closeHelp">&times;</button>
+            </div>
+            <div class="settings-group">
+                <h3>Frequently Asked Questions</h3>
+                <div class="settings-item" onclick="toggleFAQ('faq1')">
+                    <div class="settings-label">How do I earn points?</div>
+                    <i>▼</i>
+                </div>
+                <div id="faq1" class="faq-content" style="display: none; padding: 10px 0; font-size: 14px;">
+                    Watch ads from the Ads section. Each ad gives you 10 points. You can watch multiple ads per day.
+                </div>
+                
+                <div class="settings-item" onclick="toggleFAQ('faq2')">
+                    <div class="settings-label">How do I withdraw to Binance?</div>
+                    <i>▼</i>
+                </div>
+                <div id="faq2" class="faq-content" style="display: none; padding: 10px 0; font-size: 14px;">
+                    Go to Withdraw section, enter your Binance Pay ID and the amount of points you want to withdraw. Minimum withdrawal is 1000 points. Processing time is 24 hours.
+                </div>
+                
+                <div class="settings-item" onclick="toggleFAQ('faq3')">
+                    <div class="settings-label">When will I receive my withdrawal?</div>
+                    <i>▼</i>
+                </div>
+                <div id="faq3" class="faq-content" style="display: none; padding: 10px 0; font-size: 14px;">
+                    Withdrawals are processed within 24 hours. You'll receive a confirmation after processing is complete.
+                </div>
+            </div>
+            <div class="settings-group">
+                <h3>Contact Support</h3>
+                <div class="form-group">
+                    <label class="form-label">Your Message</label>
+                    <textarea class="form-input" id="supportMessage" placeholder="Describe your issue" rows="4"></textarea>
+                </div>
+                <button class="btn btn-primary" id="sendSupportBtn">Send Message</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- About App Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">About App</div>
+                <button class="close-btn" id="closeAbout">&times;</button>
+            </div>
+            <div class="settings-group" style="text-align: center;">
+                <div class="logo" style="margin: 0 auto 20px;"></div>
+                <h2>EASY EARN MUNY</h2>
+                <p style="margin-bottom: 20px; opacity: 0.8;">Version 2.0.1</p>
+                
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <p>EASY EARN MUNY allows you to earn money by watching advertisements. Convert your points to real money and withdraw directly to your Binance account.</p>
+                    <p style="margin-top: 10px; font-size: 14px; opacity: 0.8;">
+                        <strong>Processing Time:</strong> 24 hours<br>
+                        <strong>Minimum Withdrawal:</strong> 1000 points<br>
+                        <strong>Conversion Rate:</strong> 1000 points = $1.00
+                    </p>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-label">Terms of Service</div>
+                    <i>›</i>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Privacy Policy</div>
+                    <i>›</i>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Rate This App</div>
+                    <i>›</i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDC72hRgqmU4rz_icj4paEL9T6BozJZhU4",
+            authDomain: "wte-ads-bot.firebaseapp.com",
+            databaseURL: "https://wte-ads-bot-default-rtdb.firebaseio.com",
+            projectId: "wte-ads-bot",
+            storageBucket: "wte-ads-bot.firebasestorage.app",
+            messagingSenderId: "252089752732",
+            appId: "1:252089752732:web:ac12619aa62458500ee159",
+            measurementId: "G-1D06CE4CN4"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Bot configuration
+        const BOT_CONFIG = {
+            TELEGRAM_BOT_TOKEN: "7601601682:AAF9VgZr_qos-fg0a98hfNqmWvhrWyyw-pw",
+            ADMIN_CHAT_ID: "6591281607"
+        };
+
+        // Initialize Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
+        
+        // DOM Elements
+        const pointsElement = document.getElementById('points');
+        const profilePointsElement = document.getElementById('profilePoints');
+        const todayEarningsElement = document.getElementById('todayEarnings');
+        const totalAdsElement = document.getElementById('totalAds');
+        const profileAdsElement = document.getElementById('profileAds');
+        const watchAdBtn = document.getElementById('watchAdBtn');
+        const loadingElement = document.getElementById('loading');
+        const withdrawPointsInput = document.getElementById('withdrawPoints');
+        const withdrawAmountElement = document.getElementById('withdrawAmount');
+        const withdrawBtn = document.getElementById('withdrawBtn');
+        const binanceIdInput = document.getElementById('binanceId');
+        const userNameElement = document.getElementById('userName');
+        const userLevelElement = document.getElementById('userLevel');
+        const memberSinceElement = document.getElementById('memberSince');
+        const totalWithdrawnElement = document.getElementById('totalWithdrawn');
+        const weeklyProgressElement = document.getElementById('weeklyProgress');
+        const progressBarElement = document.getElementById('progressBar');
+        const weeklyGoalElement = document.getElementById('weeklyGoal');
+        const dailyAverageElement = document.getElementById('dailyAverage');
+        const dashboardHistoryElement = document.getElementById('dashboardHistory');
+        const withdrawHistoryElement = document.getElementById('withdrawHistory');
+        const notificationElement = document.getElementById('notification');
+        const adStatusElement = document.getElementById('ad-status');
+        const difoldBalanceElement = document.getElementById('difoldBalance');
+        const firebaseStatusElement = document.getElementById('firebaseStatus');
+
+        // User data
+        let userData = {
+            points: 0,
+            difoldBalance: 0,
+            totalAds: 0,
+            todayEarnings: 0,
+            todayDate: new Date().toDateString(),
+            totalWithdrawn: 0,
+            memberSince: new Date().getFullYear(),
+            userName: "User Name",
+            userLevel: "Level 1 Member",
+            binanceId: "000",
+            activityHistory: [],
+            withdrawHistory: [],
+            weeklyProgress: {
+                goal: 100,
+                current: 0,
+                dailyAverage: 0,
+                days: [0, 0, 0, 0, 0, 0, 0]
+            }
+        };
+
+        let currentUserId = null;
+
+        // Firebase Functions
+        async function initializeFirebaseUser() {
+            try {
+                firebaseStatusElement.textContent = "Connecting to server...";
+                
+                // Get Telegram user data
+                const tgUser = tg.initDataUnsafe.user;
+                if (!tgUser) {
+                    throw new Error("Telegram user data not available");
+                }
+
+                currentUserId = `tg_${tgUser.id}`;
+                
+                // Check if user exists in Firebase
+                const userDoc = await db.collection('users').doc(currentUserId).get();
+                
+                if (userDoc.exists) {
+                    // Load existing user data
+                    const firebaseData = userDoc.data();
+                    userData = { ...userData, ...firebaseData };
+                    firebaseStatusElement.textContent = "Connected to server ✓";
+                    console.log("User data loaded from Firebase");
+                } else {
+                    // Create new user
+                    userData.userId = currentUserId;
+                    userData.userName = `${tgUser.first_name} ${tgUser.last_name || ''}`.trim();
+                    userData.telegramUsername = tgUser.username;
+                    userData.createdAt = new Date().toISOString();
+                    
+                    await db.collection('users').doc(currentUserId).set(userData);
+                    firebaseStatusElement.textContent = "New account created ✓";
+                    console.log("New user created in Firebase");
+                }
+                
+                updateUI();
+                
+            } catch (error) {
+                console.error("Firebase initialization error:", error);
+                firebaseStatusElement.textContent = "Offline mode (using local storage)";
+                loadUserDataFromLocalStorage();
+            }
+        }
+
+        async function saveUserDataToFirebase() {
+            if (!currentUserId) return;
+            
+            try {
+                await db.collection('users').doc(currentUserId).set(userData, { merge: true });
+                console.log("User data saved to Firebase");
+            } catch (error) {
+                console.error("Error saving to Firebase:", error);
+                saveUserDataToLocalStorage();
+            }
+        }
+
+        function loadUserDataFromLocalStorage() {
+            const savedData = localStorage.getItem('easyEarnMunyData');
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                
+                // Check if it's a new day to reset today's earnings
+                if (parsedData.todayDate !== new Date().toDateString()) {
+                    parsedData.todayEarnings = 0;
+                    parsedData.todayDate = new Date().toDateString();
+                }
+                
+                userData = { ...userData, ...parsedData };
+            }
+            
+            // Initialize Telegram user data if available
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const tgUser = tg.initDataUnsafe.user;
+                userData.userName = `${tgUser.first_name} ${tgUser.last_name || ''}`.trim();
+                userData.userId = tgUser.id;
+                userData.telegramUsername = tgUser.username;
+            }
+        }
+
+        function saveUserDataToLocalStorage() {
+            localStorage.setItem('easyEarnMunyData', JSON.stringify(userData));
+        }
+
+        async function saveWithdrawalToFirebase(withdrawalData) {
+            if (!currentUserId) return;
+            
+            try {
+                await db.collection('withdrawals').add({
+                    ...withdrawalData,
+                    userId: currentUserId,
+                    userName: userData.userName,
+                    telegramUsername: userData.telegramUsername,
+                    createdAt: new Date().toISOString(),
+                    status: 'pending'
+                });
+                console.log("Withdrawal saved to Firebase");
+                
+                // Send Telegram notification
+                sendWithdrawalNotification(withdrawalData.id, withdrawalData.points, withdrawalData.amount, withdrawalData.binanceId);
+                
+            } catch (error) {
+                console.error("Error saving withdrawal to Firebase:", error);
+            }
+        }
+
+        // MoniTag Ad Integration
+        let monitagAdLoaded = false;
+
+        // Your showMyAd function
+        function showMyAd() {
+            var myZoneID = '10233253';
+            var adFunctionName = 'show_' + myZoneID;
+
+            if (typeof window[adFunctionName] === 'function') {
+               
+                window[adFunctionName]().then(() => {
+                    console.log("অ্যাড দেখা শেষ! পয়েন্ট যোগ করা হলো।");
+                    completeAdWatch();
+
+                }).catch((error) => {
+                    console.log("অ্যাড লোড হয়নি। ইন্টারনেট চেক করুন অথবা Zone ID ভুল আছে।", error);
+                    adStatusElement.textContent = 'Error loading ad. Using demo mode.';
+                    simulateAdWatch();
+                });
+
+            } else {
+                console.log("অ্যাড লোড হয়নি। ইন্টারনেট চেক করুন অথবা Zone ID ভুল আছে।");
+                adStatusElement.textContent = 'Ad system not available. Using demo mode.';
+                simulateAdWatch();
+            }
+        }
+
+        // Initialize the app
+        function initApp() {
+            setupEventListeners();
+            initializeMoniTagAds();
+            initializeFirebaseUser();
+        }
+
+        // Initialize MoniTag Ads
+        function initializeMoniTagAds() {
+            if (typeof window.show_10233253 !== 'undefined') {
+                adStatusElement.textContent = 'Ad ready to load';
+                monitagAdLoaded = true;
+            } else {
+                adStatusElement.textContent = 'Loading ad system...';
+                setTimeout(() => {
+                    if (typeof window.show_10233253 !== 'undefined') {
+                        adStatusElement.textContent = 'Ad ready to load';
+                        monitagAdLoaded = true;
+                    } else {
+                        adStatusElement.textContent = 'Ad system not available. Using demo mode.';
+                    }
+                }, 2000);
+            }
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Navigation tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Watch ad button
+            watchAdBtn.addEventListener('click', watchAd);
+
+            // Withdraw points input
+            withdrawPointsInput.addEventListener('input', updateWithdrawAmount);
+
+            // Withdraw button
+            withdrawBtn.addEventListener('click', processWithdrawal);
+
+            // Profile menu items
+            document.getElementById('editProfileBtn').addEventListener('click', () => openModal('editProfileModal'));
+            document.getElementById('binanceSettings').addEventListener('click', () => openModal('binanceModal'));
+            document.getElementById('privacySettings').addEventListener('click', () => openModal('privacyModal'));
+            document.getElementById('helpSupport').addEventListener('click', () => openModal('helpModal'));
+            document.getElementById('aboutApp').addEventListener('click', () => openModal('aboutModal'));
+
+            // Modal close buttons
+            document.getElementById('closeEditProfile').addEventListener('click', () => closeModal('editProfileModal'));
+            document.getElementById('closeBinance').addEventListener('click', () => closeModal('binanceModal'));
+            document.getElementById('closePrivacy').addEventListener('click', () => closeModal('privacyModal'));
+            document.getElementById('closeHelp').addEventListener('click', () => closeModal('helpModal'));
+            document.getElementById('closeAbout').addEventListener('click', () => closeModal('aboutModal'));
+
+            // Save buttons
+            document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+            document.getElementById('saveBinanceBtn').addEventListener('click', saveBinanceSettings);
+            document.getElementById('sendSupportBtn').addEventListener('click', sendSupportMessage);
+        }
+
+        // Switch between tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.nav-tab[data-tab="${tabId}"]`).classList.add('active');
+
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Watch ad function
+        function watchAd() {
+            loadingElement.style.display = 'block';
+            watchAdBtn.disabled = true;
+            adStatusElement.textContent = 'Loading advertisement...';
+            showMyAd();
+        }
+
+        // Complete ad watching and reward user
+        async function completeAdWatch() {
+            // Add points
+            userData.points += 10;
+            userData.difoldBalance += 10;
+            userData.totalAds += 1;
+            userData.todayEarnings += 10;
+            
+            // Update weekly progress
+            const today = new Date().getDay();
+            userData.weeklyProgress.days[today] += 10;
+            userData.weeklyProgress.current = userData.weeklyProgress.days.reduce((a, b) => a + b, 0);
+            userData.weeklyProgress.dailyAverage = Math.round(userData.weeklyProgress.current / 7);
+            
+            // Add to activity history
+            userData.activityHistory.unshift({
+                type: 'ad_watched',
+                points: 10,
+                date: new Date().toLocaleString(),
+                source: 'monitag'
+            });
+            
+            // Keep only last 10 activities
+            if (userData.activityHistory.length > 10) {
+                userData.activityHistory = userData.activityHistory.slice(0, 10);
+            }
+            
+            // Save to Firebase and update UI
+            await saveUserDataToFirebase();
+            updateUI();
+            
+            // Hide loading
+            loadingElement.style.display = 'none';
+            watchAdBtn.disabled = false;
+            adStatusElement.textContent = 'Ad completed! +10 points earned.';
+            
+            // Show notification
+            showNotification('+10 points earned from watching ad!');
+            
+            // Reset ad status after 3 seconds
+            setTimeout(() => {
+                adStatusElement.textContent = 'Ad ready to load';
+            }, 3000);
+        }
+
+        // Simulate ad watching (demo mode)
+        function simulateAdWatch() {
+            setTimeout(() => {
+                completeAdWatch();
+            }, 1000);
+        }
+
+        // Update withdraw amount based on points input
+        function updateWithdrawAmount() {
+            const points = parseInt(withdrawPointsInput.value) || 0;
+            const amount = (points / 1000) * 1.00;
+            
+            withdrawAmountElement.textContent = `$${amount.toFixed(2)}`;
+            
+            const minPoints = 1000;
+            const maxPoints = 10000;
+            const hasEnoughPoints = points >= minPoints && points <= maxPoints && points <= userData.points;
+            const hasBinanceId = binanceIdInput.value.trim() !== '';
+            
+            withdrawBtn.disabled = !(hasEnoughPoints && hasBinanceId);
+        }
+
+        // Process withdrawal with 24-hour processing time
+        async function processWithdrawal() {
+            const points = parseInt(withdrawPointsInput.value);
+            const amount = (points / 1000) * 1.00;
+            
+            if (points < 1000 || points > 10000) {
+                showNotification('Please enter between 1000 and 10,000 points');
+                return;
+            }
+            
+            if (points > userData.points) {
+                showNotification('You don\'t have enough points');
+                return;
+            }
+            
+            if (!binanceIdInput.value.trim()) {
+                showNotification('Please enter your Binance Pay ID');
+                return;
+            }
+            
+            // Deduct points
+            userData.points -= points;
+            
+            // Calculate processing completion time (24 hours from now)
+            const processingTime = new Date();
+            processingTime.setHours(processingTime.getHours() + 24);
+            
+            // Add to withdrawal history
+            const withdrawalId = 'WD' + Date.now();
+            const withdrawalData = {
+                id: withdrawalId,
+                points: points,
+                amount: amount,
+                binanceId: binanceIdInput.value,
+                date: new Date().toLocaleString(),
+                status: 'processing',
+                processingUntil: processingTime.getTime()
+            };
+            
+            userData.withdrawHistory.unshift(withdrawalData);
+            
+            // Save to Firebase and update UI
+            await saveUserDataToFirebase();
+            await saveWithdrawalToFirebase(withdrawalData);
+            updateUI();
+            
+            // Reset form
+            withdrawPointsInput.value = '';
+            updateWithdrawAmount();
+            
+            // Show notification
+            showNotification(`Withdrawal request submitted! $${amount.toFixed(2)} will be sent to your Binance account within 24 hours.`);
+            
+            // Start processing countdown
+            startWithdrawalProcessing(withdrawalId);
+        }
+
+        // Send withdrawal notification to Telegram bot
+        function sendWithdrawalNotification(withdrawalId, points, amount, binanceId) {
+            const message = `🔄 New Withdrawal Request
+📋 ID: ${withdrawalId}
+👤 User: ${userData.userName}
+📧 Telegram: @${userData.telegramUsername || 'N/A'}
+💰 Points: ${points}
+💵 Amount: $${amount.toFixed(2)}
+🔶 Binance ID: ${binanceId}
+⏰ Processing Time: 24 hours
+📅 Requested: ${new Date().toLocaleString()}`;
+
+            // Send to Telegram bot
+            fetch(`https://api.telegram.org/bot${BOT_CONFIG.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: BOT_CONFIG.ADMIN_CHAT_ID,
+                    text: message
+                })
+            }).catch(error => console.error('Telegram notification failed:', error));
+        }
+
+        // Start withdrawal processing countdown
+        function startWithdrawalProcessing(withdrawalId) {
+            const withdrawal = userData.withdrawHistory.find(w => w.id === withdrawalId);
+            if (!withdrawal) return;
+
+            const checkCompletion = setInterval(() => {
+                const now = new Date().getTime();
+                if (now >= withdrawal.processingUntil) {
+                    // Mark as completed after 24 hours
+                    withdrawal.status = 'completed';
+                    userData.totalWithdrawn += withdrawal.amount;
+                    saveUserDataToFirebase();
+                    updateUI();
+                    clearInterval(checkCompletion);
+                    showNotification(`Withdrawal ${withdrawalId} completed! $${withdrawal.amount.toFixed(2)} has been sent to your Binance account.`);
+                }
+            }, 60000);
+        }
+
+        // Update UI with current data
+        function updateUI() {
+            // Points and stats
+            pointsElement.textContent = userData.points;
+            profilePointsElement.textContent = userData.points;
+            todayEarningsElement.textContent = userData.todayEarnings;
+            totalAdsElement.textContent = userData.totalAds;
+            profileAdsElement.textContent = userData.totalAds;
+            difoldBalanceElement.textContent = userData.difoldBalance;
+            
+            // User info
+            userNameElement.textContent = userData.userName;
+            userLevelElement.textContent = userData.userLevel;
+            memberSinceElement.textContent = userData.memberSince;
+            totalWithdrawnElement.textContent = `$${userData.totalWithdrawn.toFixed(2)}`;
+            
+            // Weekly progress
+            const progressPercentage = Math.min(100, (userData.weeklyProgress.current / userData.weeklyProgress.goal) * 100);
+            weeklyProgressElement.textContent = `${Math.round(progressPercentage)}%`;
+            progressBarElement.style.width = `${progressPercentage}%`;
+            weeklyGoalElement.textContent = `${userData.weeklyProgress.current}/${userData.weeklyProgress.goal}`;
+            dailyAverageElement.textContent = userData.weeklyProgress.dailyAverage;
+            
+            // Activity history
+            updateActivityHistory();
+            
+            // Withdrawal history
+            updateWithdrawalHistory();
+            
+            // Update binance ID if changed
+            if (userData.binanceId) {
+                binanceIdInput.value = userData.binanceId;
+                document.getElementById('binancePayId').value = userData.binanceId;
+            }
+        }
+
+        // Update activity history
+        function updateActivityHistory() {
+            dashboardHistoryElement.innerHTML = '';
+            
+            if (userData.activityHistory.length === 0) {
+                dashboardHistoryElement.innerHTML = '<div class="history-item"><div>No activity yet</div></div>';
+                return;
+            }
+            
+            userData.activityHistory.forEach(activity => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                if (activity.type === 'ad_watched') {
+                    historyItem.innerHTML = `
+                        <div>
+                            <div>Watched Ad</div>
+                            <div class="history-date">${activity.date}</div>
+                        </div>
+                        <div class="history-points">+${activity.points} pts</div>
+                    `;
+                }
+                
+                dashboardHistoryElement.appendChild(historyItem);
+            });
+        }
+
+        // Update withdrawal history
+        function updateWithdrawalHistory() {
+            withdrawHistoryElement.innerHTML = '';
+            
+            if (userData.withdrawHistory.length === 0) {
+                withdrawHistoryElement.innerHTML = `
+                    <div class="history-item">
+                        <div>
+                            <div>No withdrawals yet</div>
+                            <div class="history-date">Earn more points to withdraw</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            userData.withdrawHistory.forEach(withdrawal => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                const statusClass = withdrawal.status === 'processing' ? 'status-processing' : 'status-completed';
+                const statusText = withdrawal.status === 'processing' ? 'Processing (24h)' : 'Completed';
+                
+                historyItem.innerHTML = `
+                    <div>
+                        <div>Withdrawal to ${withdrawal.binanceId}</div>
+                        <div class="history-date">${withdrawal.date}</div>
+                    </div>
+                    <div>
+                        <div class="history-points">-${withdrawal.points} pts</div>
+                        <div class="status-badge ${statusClass}">${statusText}</div>
+                    </div>
+                `;
+                
+                withdrawHistoryElement.appendChild(historyItem);
+            });
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Save profile
+        async function saveProfile() {
+            const name = document.getElementById('editName').value;
+            const email = document.getElementById('editEmail').value;
+            const phone = document.getElementById('editPhone').value;
+            
+            if (name) {
+                userData.userName = name;
+            }
+            
+            await saveUserDataToFirebase();
+            showNotification('Profile updated successfully!');
+            closeModal('editProfileModal');
+            updateUI();
+        }
+
+        // Save Binance settings
+        async function saveBinanceSettings() {
+            const binanceId = document.getElementById('binancePayId').value;
+            const network = document.getElementById('binanceNetwork').value;
+            const autoWithdraw = document.getElementById('autoWithdraw').checked;
+            
+            if (binanceId) {
+                userData.binanceId = binanceId;
+                binanceIdInput.value = binanceId;
+            }
+            
+            await saveUserDataToFirebase();
+            showNotification('Binance settings saved!');
+            closeModal('binanceModal');
+        }
+
+        // Send support message
+        function sendSupportMessage() {
+            const message = document.getElementById('supportMessage').value;
+            
+            if (!message.trim()) {
+                showNotification('Please enter a message');
+                return;
+            }
+            
+            showNotification('Message sent to support! We\'ll get back to you soon.');
+            document.getElementById('supportMessage').value = '';
+            closeModal('helpModal');
+        }
+
+        // Show notification
+        function showNotification(message) {
+            notificationElement.textContent = message;
+            notificationElement.style.display = 'block';
+            
+            setTimeout(() => {
+                notificationElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Toggle FAQ content
+        function toggleFAQ(id) {
+            const faqContent = document.getElementById(id);
+            if (faqContent.style.display === 'none') {
+                faqContent.style.display = 'block';
+            } else {
+                faqContent.style.display = 'none';
+            }
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
